@@ -230,3 +230,24 @@
     max-height: calc(100% - 80px) !important;
   }
 }
+
+.actions-box {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.export-image-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: var(--highlight-color);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--box-border-radius);
+  font-size: 14px;
+  transition: opacity 0.2s;
+}
+
+.export-image-btn:hover {
+  opacity: 0.8;
+}
