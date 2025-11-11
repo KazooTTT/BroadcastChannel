@@ -51,7 +51,7 @@ function loadFonts() {
 /**
  * Create vertical layout for post content
  */
-function createVerticalLayout(title, postDate, plainText, tags, backgroundColor, textColor) {
+function createVerticalLayout(title, postDate, plainText, tags, backgroundColor, textColor, mediaIndicator = '') {
   return {
     type: 'div',
     props: {
@@ -124,7 +124,7 @@ function createVerticalLayout(title, postDate, plainText, tags, backgroundColor,
               wordWrap: 'break-word',
               flex: 1,
             },
-            children: plainText.slice(0, 1000) + (plainText.length > 1000 ? '...' : ''),
+            children: (plainText.slice(0, 1000) + (plainText.length > 1000 ? '...' : '') + mediaIndicator) || '(无内容)',
           },
         },
         // Tags if present
@@ -164,7 +164,7 @@ function createVerticalLayout(title, postDate, plainText, tags, backgroundColor,
 /**
  * Create compact layout for post content
  */
-function createCompactLayout(title, postDate, plainText, tags, backgroundColor, textColor) {
+function createCompactLayout(title, postDate, plainText, tags, backgroundColor, textColor, mediaIndicator = '') {
   return {
     type: 'div',
     props: {
@@ -226,7 +226,7 @@ function createCompactLayout(title, postDate, plainText, tags, backgroundColor, 
               wordWrap: 'break-word',
               flex: 1,
             },
-            children: plainText.slice(0, 600) + (plainText.length > 600 ? '...' : ''),
+            children: (plainText.slice(0, 600) + (plainText.length > 600 ? '...' : '') + mediaIndicator) || '(无内容)',
           },
         },
         // Tags
@@ -279,7 +279,20 @@ export async function generatePostImage(post, channelInfo, options = {}) {
     textColor = '#000000',
   } = options
 
-  const plainText = stripHtml(post.content || post.text || '')
+  // Extract text content and count media elements
+  const rawContent = post.content || post.text || ''
+  const plainText = stripHtml(rawContent)
+
+  // Count images and videos in the content
+  const imageCount = (rawContent.match(/<img[^>]*>/gi) || []).length
+  const videoCount = (rawContent.match(/<video[^>]*>/gi) || []).length
+  const hasMedia = imageCount > 0 || videoCount > 0
+
+  // Create media indicator text
+  const mediaIndicator = hasMedia
+    ? `\n\n📎 ${imageCount > 0 ? `${imageCount} 张图片` : ''}${imageCount > 0 && videoCount > 0 ? ' · ' : ''}${videoCount > 0 ? `${videoCount} 个视频` : ''}`
+    : ''
+
   const title = channelInfo?.title || 'BroadcastChannel'
   const postDate = new Date(post.datetime).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -294,11 +307,11 @@ export async function generatePostImage(post, channelInfo, options = {}) {
   // Select layout based on mode
   let layout
   if (mode === 'compact') {
-    layout = createCompactLayout(title, postDate, plainText, tags, backgroundColor, textColor)
+    layout = createCompactLayout(title, postDate, plainText, tags, backgroundColor, textColor, mediaIndicator)
   }
   else {
     // Default to vertical layout
-    layout = createVerticalLayout(title, postDate, plainText, tags, backgroundColor, textColor)
+    layout = createVerticalLayout(title, postDate, plainText, tags, backgroundColor, textColor, mediaIndicator)
   }
 
   // Create SVG markup using React-like JSX syntax for satori

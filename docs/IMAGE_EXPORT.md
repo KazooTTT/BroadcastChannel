@@ -70,6 +70,16 @@ Generates an image with dark background and white text.
 - Up to 600 characters of content
 - Up to 5 tags displayed
 
+## Media Handling
+
+When a post contains images or videos, the generated image will:
+
+- Display all text content from the post
+- Show a media indicator at the bottom (e.g., "📎 2 张图片" or "📎 1 个视频")
+- Indicate the type and count of media files in the post
+
+**Note**: The actual images and videos from the post are not rendered in the exported image - only the text content and a media count indicator are shown. This is by design to keep the exported images simple and text-focused.
+
 ## UI Integration
 
 On each post detail page, an "📷 Export as Image" button is displayed that links to the image generation endpoint with default settings.
