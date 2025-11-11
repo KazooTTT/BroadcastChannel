@@ -43,6 +43,16 @@ const timeago = datetime.isBefore(dayjs().subtract(1, 'w')) ? datetime.format('H
   }
 
   {
+    isItem && (
+      <div class="actions-box">
+        <a href={`${SITE_URL}posts/${post.id}/image`} class="export-image-btn" title="Export as Image" target="_blank">
+          📷 Export as Image
+        </a>
+      </div>
+    )
+  }
+
+  {
     COMMENTS && isItem && (
       <div class="comments">
         <script
