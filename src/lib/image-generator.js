@@ -2,36 +2,50 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { Buffer } from 'node:buffer'
+import * as cheerio from 'cheerio'
 import sharp from 'sharp'
 import satori from 'satori'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
-// Strip HTML tags for plain text rendering
+// Strip HTML tags for plain text rendering using cheerio for safety
 function stripHtml(html) {
-  return html
-    .replace(/<[^>]*>/g, '')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
+  if (!html)
+    return ''
+  const $ = cheerio.load(html, null, false)
+  return $.text()
 }
 
-// Load font once at module level
-let fontData
-function loadFont() {
-  if (!fontData) {
+// Load fonts once at module level
+let fontsData
+function loadFonts() {
+  if (!fontsData) {
     try {
-      const fontPath = join(__dirname, '../../public/fonts/noto-sans.ttf')
-      fontData = readFileSync(fontPath)
+      // Load both Latin and CJK fonts for comprehensive character support
+      const notoSansPath = join(__dirname, '../../public/fonts/noto-sans.ttf')
+      const notoSansScPath = join(__dirname, '../../public/fonts/noto-sans-sc.ttf')
+
+      fontsData = [
+        {
+          name: 'Noto Sans',
+          data: readFileSync(notoSansPath),
+          weight: 400,
+          style: 'normal',
+        },
+        {
+          name: 'Noto Sans SC',
+          data: readFileSync(notoSansScPath),
+          weight: 400,
+          style: 'normal',
+        },
+      ]
     }
     catch (error) {
-      console.error('Failed to load font:', error)
-      throw new Error('Font file not found. Please ensure noto-sans.ttf exists in public/fonts/')
+      console.error('Failed to load fonts:', error)
+      throw new Error('Font files not found. Please ensure noto-sans.ttf and noto-sans-sc.ttf exist in public/fonts/')
     }
   }
-  return fontData
+  return fontsData
 }
 
 /**
@@ -49,7 +63,7 @@ function createVerticalLayout(title, postDate, plainText, tags, backgroundColor,
         backgroundColor,
         color: textColor,
         padding: '40px',
-        fontFamily: 'Inter, sans-serif',
+        fontFamily: '"Noto Sans", "Noto Sans SC", sans-serif',
       },
       children: [
         // Header with channel info
@@ -162,7 +176,7 @@ function createCompactLayout(title, postDate, plainText, tags, backgroundColor, 
         backgroundColor,
         color: textColor,
         padding: '30px',
-        fontFamily: 'Inter, sans-serif',
+        fontFamily: '"Noto Sans", "Noto Sans SC", sans-serif',
       },
       children: [
         // Compact header
@@ -274,8 +288,8 @@ export async function generatePostImage(post, channelInfo, options = {}) {
   })
   const tags = post.tags || []
 
-  // Load font data
-  const font = loadFont()
+  // Load font data (supports both Latin and CJK characters)
+  const fonts = loadFonts()
 
   // Select layout based on mode
   let layout
@@ -293,14 +307,7 @@ export async function generatePostImage(post, channelInfo, options = {}) {
     {
       width,
       height: height || 600, // Default height if not specified
-      fonts: [
-        {
-          name: 'Inter',
-          data: font,
-          weight: 400,
-          style: 'normal',
-        },
-      ],
+      fonts,
     },
   )
 

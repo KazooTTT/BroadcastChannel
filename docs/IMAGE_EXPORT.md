@@ -87,9 +87,14 @@ Users can:
 - **satori**: Converts HTML/JSX to SVG
 - **sharp**: Converts SVG to PNG with high quality
 
-### Font
+### Fonts
 
-The feature uses Noto Sans Regular font for broad language support, including Chinese characters.
+The feature uses multiple fonts for comprehensive language support:
+
+- **Noto Sans Regular**: For Latin characters, numbers, and common symbols
+- **Noto Sans SC (Simplified Chinese)**: For Chinese characters (汉字)
+
+This ensures proper rendering of multilingual content including English, Chinese, and mixed-language posts.
 
 ### Performance
 
