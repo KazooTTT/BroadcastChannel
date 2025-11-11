@@ -9,6 +9,7 @@
 ## ✨ 特性
 
 - **将 Telegram Channel 转为微博客**
+- **导出为图片** - 将帖子导出为精美的图片分享到社交平台
 - **SEO 友好** `/sitemap.xml`
 - **浏览器端 0 JS**
 - **提供 RSS 和 RSS JSON** `/rss.xml` `/rss.json`

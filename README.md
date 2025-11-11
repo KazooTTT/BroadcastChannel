@@ -9,6 +9,7 @@ English | [简体中文](./README.zh-cn.md)
 ## ✨ Features
 
 - **Turn your Telegram Channel into a MicroBlog**
+- **Export posts as images** - Share posts as beautiful images on social media
 - **SEO friendly** `/sitemap.xml`
 - **0 JS on the browser side**
 - **RSS and RSS JSON** `/rss.xml` `/rss.json`
